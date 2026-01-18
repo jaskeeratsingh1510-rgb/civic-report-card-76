@@ -1,77 +1,67 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle, TrendingUp, Users } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const Hero = () => {
   return (
-    <section className="relative overflow-hidden gradient-hero">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-accent rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary-foreground rounded-full blur-3xl" />
-      </div>
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background Image - Mumbai CST Station */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `url('https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=2070&auto=format&fit=crop')`,
+        }}
+      />
+      
+      {/* Overlay */}
+      <div className="absolute inset-0 hero-overlay" />
 
-      <div className="container relative py-20 md:py-32">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent-foreground/10 border border-accent-foreground/20 text-accent-foreground text-sm font-medium mb-8 animate-fade-up">
-            <span className="flex h-2 w-2 rounded-full bg-accent animate-pulse-gentle" />
-            Empowering Informed Democracy
-          </div>
+      {/* Content */}
+      <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+        {/* Aamchi label */}
+        <p className="text-accent font-medium tracking-[0.3em] uppercase text-sm md:text-base mb-4 animate-fade-up">
+          aamchi
+        </p>
 
-          {/* Headline */}
-          <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6 animate-fade-up" style={{ animationDelay: '0.1s' }}>
-            Your Digital Report Card for{" "}
-            <span className="text-accent">Election Candidates</span>
-          </h1>
+        {/* Mumbai in Devanagari */}
+        <h1 className="font-heading text-[80px] md:text-[140px] lg:text-[180px] font-bold text-primary-foreground leading-none mb-6 animate-fade-up" style={{ animationDelay: '0.1s' }}>
+          मुंबई
+        </h1>
 
-          {/* Subheadline */}
-          <p className="text-lg md:text-xl text-primary-foreground/80 mb-10 max-w-2xl mx-auto animate-fade-up" style={{ animationDelay: '0.2s' }}>
-            Track manifesto promises, verify fund utilization, and make informed voting decisions with transparent, data-driven insights.
-          </p>
+        {/* Tagline */}
+        <p className="text-xl md:text-2xl text-primary-foreground font-medium mb-3 animate-fade-up" style={{ animationDelay: '0.2s' }}>
+          Know your ward. Know your corporator.
+        </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16 animate-fade-up" style={{ animationDelay: '0.3s' }}>
-            <Button variant="hero" size="xl">
-              Explore Candidates
-              <ArrowRight className="h-5 w-5" />
-            </Button>
-            <Button variant="heroOutline" size="xl">
-              How It Works
-            </Button>
-          </div>
+        {/* Description */}
+        <p className="text-primary-foreground/70 text-base md:text-lg max-w-xl mx-auto mb-10 animate-fade-up" style={{ animationDelay: '0.3s' }}>
+          Navigate through 227 electoral wards and hold your representatives accountable
+        </p>
 
-          {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto animate-fade-up" style={{ animationDelay: '0.4s' }}>
-            <div className="flex items-center justify-center gap-3 p-4 rounded-xl bg-primary-foreground/10 backdrop-blur-sm">
-              <Users className="h-8 w-8 text-accent" />
-              <div className="text-left">
-                <p className="text-2xl font-bold text-primary-foreground">2,500+</p>
-                <p className="text-sm text-primary-foreground/70">Candidates Tracked</p>
-              </div>
-            </div>
-            <div className="flex items-center justify-center gap-3 p-4 rounded-xl bg-primary-foreground/10 backdrop-blur-sm">
-              <CheckCircle className="h-8 w-8 text-accent" />
-              <div className="text-left">
-                <p className="text-2xl font-bold text-primary-foreground">15,000+</p>
-                <p className="text-sm text-primary-foreground/70">Promises Monitored</p>
-              </div>
-            </div>
-            <div className="flex items-center justify-center gap-3 p-4 rounded-xl bg-primary-foreground/10 backdrop-blur-sm">
-              <TrendingUp className="h-8 w-8 text-accent" />
-              <div className="text-left">
-                <p className="text-2xl font-bold text-primary-foreground">₹50Cr+</p>
-                <p className="text-sm text-primary-foreground/70">Funds Tracked</p>
-              </div>
-            </div>
-          </div>
+        {/* CTA Button */}
+        <div className="animate-fade-up" style={{ animationDelay: '0.4s' }}>
+          <Button 
+            size="lg" 
+            className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 rounded-full px-8 py-6 text-base font-medium gap-3 group"
+          >
+            <span className="text-xl">🚕</span>
+            Explore Your Ward
+            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+          </Button>
         </div>
-      </div>
 
-      {/* Bottom Wave */}
-      <div className="absolute bottom-0 left-0 right-0">
-        <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
-          <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V120Z" fill="hsl(var(--background))" />
-        </svg>
+        {/* Bottom text */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-fade-up" style={{ animationDelay: '0.5s' }}>
+          <p className="text-primary-foreground/60 text-sm mb-3">
+            Open data for civic transparency
+          </p>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="border-primary-foreground/30 text-primary-foreground/80 hover:bg-primary-foreground/10 rounded-full uppercase tracking-wider text-xs"
+          >
+            Resources and Credits
+          </Button>
+        </div>
       </div>
     </section>
   );
