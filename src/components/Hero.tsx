@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
@@ -39,14 +40,16 @@ const Hero = () => {
 
         {/* CTA Button */}
         <div className="animate-fade-up" style={{ animationDelay: '0.4s' }}>
-          <Button 
-            size="lg" 
-            className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 rounded-full px-8 py-6 text-base font-medium gap-3 group"
-          >
-            <span className="text-xl">🚕</span>
-            Explore Your Ward
-            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-          </Button>
+          <Link to="/map">
+            <Button 
+              size="lg" 
+              className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 rounded-full px-8 py-6 text-base font-medium gap-3 group"
+            >
+              <span className="text-xl">🚕</span>
+              Explore Your Ward
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </Link>
         </div>
 
         {/* Bottom text */}
