@@ -1,27 +1,46 @@
-import { useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
-import MumbaiMap from "@/components/MumbaiMap";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MapPin, Search } from "lucide-react";
-import { type WardResult } from "@/data/candidates";
+import { MapPin, Search, ZoomIn, ZoomOut, Locate } from "lucide-react";
+import { getWardResults } from "@/data/candidates";
 
 const MapPage = () => {
-  const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<"electoral" | "plain" | "results">("electoral");
   const [hoveredWard, setHoveredWard] = useState<number | null>(null);
-  const [hoveredResult, setHoveredResult] = useState<WardResult | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const wardResults = getWardResults();
 
-  const handleWardHover = useCallback((ward: number | null, result?: WardResult) => {
-    setHoveredWard(ward);
-    setHoveredResult(result || null);
-  }, []);
+  const getWardColor = (ward: number) => {
+    if (viewMode === "plain") return "fill-secondary stroke-border";
+    
+    const result = wardResults.find(w => w.ward === ward);
+    if (!result) return "fill-secondary stroke-border";
 
-  const handleWardClick = useCallback((ward: number) => {
-    navigate(`/candidates?ward=${ward}`);
-  }, [navigate]);
+    if (viewMode === "results") {
+      // Color by winning party
+      const colors: Record<string, string> = {
+        "BJP": "fill-[#FF9933]",
+        "SS (UBT)": "fill-[#FF6B00]",
+        "SS": "fill-[#FF6B00]",
+        "INC": "fill-[#00BFFF]",
+        "AIMIM": "fill-[#008000]",
+        "MNS": "fill-[#FFD700]",
+        "NCP": "fill-[#00008B]",
+        "SP": "fill-[#FF0000]",
+        "NCP (SP)": "fill-[#004225]",
+        "IND": "fill-[#808080]",
+      };
+      return `${colors[result.winner.partyShort] || "fill-secondary"} stroke-background`;
+    }
+
+    return "fill-secondary hover:fill-accent/20 stroke-border cursor-pointer";
+  };
+
+  // Create a simplified ward grid representation
+  const wardGrid = Array.from({ length: 227 }, (_, i) => i + 1);
+  const gridCols = 15;
 
   return (
     <div className="min-h-screen bg-background">
@@ -81,54 +100,95 @@ const MapPage = () => {
         {/* Map Container */}
         <div className="relative">
           {/* Ward Info Tooltip */}
-          {hoveredWard && hoveredResult && (
-            <div className="absolute top-4 left-4 z-[1000] bg-card rounded-lg shadow-lg border border-border p-4 min-w-[220px] pointer-events-none">
+          {hoveredWard && (
+            <div className="absolute top-4 left-4 z-30 bg-card rounded-lg shadow-lg border border-border p-4 min-w-[200px]">
               <h3 className="font-heading font-bold text-lg">Ward {hoveredWard}</h3>
-              <p className="text-sm text-muted-foreground mb-3">
-                {hoveredResult.wardName}
-              </p>
-              <div className="pt-2 border-t border-border space-y-1">
-                <p className="text-xs text-muted-foreground">Winner</p>
-                <p className="font-medium">{hoveredResult.winner.name}</p>
-                <div className="flex items-center gap-2">
-                  <span 
-                    className="px-2 py-0.5 rounded text-xs font-medium text-white"
-                    style={{ backgroundColor: hoveredResult.winner.partyColor }}
-                  >
-                    {hoveredResult.winner.partyShort}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {hoveredResult.winner.votes.toLocaleString()} votes
-                  </span>
-                </div>
-              </div>
+              {wardResults.find(w => w.ward === hoveredWard) && (
+                <>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    {wardResults.find(w => w.ward === hoveredWard)?.wardName}
+                  </p>
+                  <div className="pt-2 border-t border-border">
+                    <p className="text-xs text-muted-foreground">Winner</p>
+                    <p className="font-medium">{wardResults.find(w => w.ward === hoveredWard)?.winner.name}</p>
+                    <p className="text-sm" style={{ color: wardResults.find(w => w.ward === hoveredWard)?.winner.partyColor }}>
+                      {wardResults.find(w => w.ward === hoveredWard)?.winner.partyShort}
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
-          {/* Interactive Map */}
-          <MumbaiMap
-            viewMode={viewMode}
-            searchQuery={searchQuery}
-            onWardHover={handleWardHover}
-            onWardClick={handleWardClick}
-          />
+          {/* Zoom Controls */}
+          <div className="absolute bottom-4 left-4 z-30 flex flex-col gap-2">
+            <Button variant="outline" size="icon" className="rounded-full bg-background">
+              <ZoomIn className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="icon" className="rounded-full bg-background">
+              <ZoomOut className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="icon" className="rounded-full bg-background">
+              <Locate className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Ward Grid Map */}
+          <div className="container py-8">
+            <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${gridCols}, minmax(0, 1fr))` }}>
+              {wardGrid.map((ward) => {
+                const result = wardResults.find(w => w.ward === ward);
+                const matchesSearch = searchQuery === "" || 
+                  ward.toString().includes(searchQuery) ||
+                  result?.wardName.toLowerCase().includes(searchQuery.toLowerCase());
+
+                return (
+                  <Link
+                    key={ward}
+                    to={`/candidates?ward=${ward}`}
+                    className={`
+                      aspect-square rounded-sm flex items-center justify-center text-xs font-medium
+                      transition-all duration-200 border
+                      ${matchesSearch ? '' : 'opacity-30'}
+                      ${hoveredWard === ward ? 'ring-2 ring-accent ring-offset-2' : ''}
+                      ${viewMode === "results" && result
+                        ? `text-white`
+                        : 'text-muted-foreground hover:text-foreground'
+                      }
+                    `}
+                    style={{
+                      backgroundColor: viewMode === "results" && result 
+                        ? result.winner.partyColor 
+                        : viewMode === "electoral" 
+                          ? 'hsl(var(--secondary))'
+                          : 'transparent',
+                      borderColor: 'hsl(var(--border))',
+                    }}
+                    onMouseEnter={() => setHoveredWard(ward)}
+                    onMouseLeave={() => setHoveredWard(null)}
+                  >
+                    {ward}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
 
           {/* Legend for Results */}
           {viewMode === "results" && (
-            <div className="absolute bottom-4 right-4 z-[1000] bg-card/95 backdrop-blur rounded-lg border border-border p-3 shadow-lg">
-              <p className="text-xs font-medium text-muted-foreground mb-2">Party Colors</p>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+            <div className="container pb-8">
+              <div className="flex flex-wrap justify-center gap-4 p-4 bg-card rounded-lg border border-border">
                 {[
                   { party: "BJP", color: "#FF9933" },
                   { party: "SS (UBT)", color: "#FF6B00" },
+                  { party: "Shiv Sena", color: "#FF6B00" },
                   { party: "Congress", color: "#00BFFF" },
                   { party: "MNS", color: "#FFD700" },
-                  { party: "NCP", color: "#00008B" },
                   { party: "Others", color: "#808080" },
                 ].map(({ party, color }) => (
                   <div key={party} className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: color }} />
-                    <span className="text-xs text-muted-foreground">{party}</span>
+                    <div className="w-4 h-4 rounded" style={{ backgroundColor: color }} />
+                    <span className="text-sm text-muted-foreground">{party}</span>
                   </div>
                 ))}
               </div>
@@ -136,7 +196,7 @@ const MapPage = () => {
           )}
 
           {/* Helper Text */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1000] text-sm text-muted-foreground bg-background/80 backdrop-blur px-3 py-1 rounded-full border border-border">
+          <div className="fixed bottom-4 right-4 text-sm text-muted-foreground">
             Hover for info • Click for details
           </div>
         </div>
