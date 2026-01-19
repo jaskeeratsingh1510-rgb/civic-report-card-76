@@ -12,15 +12,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Search, MapPin, Vote, ChevronLeft, ChevronRight, Trophy } from "lucide-react";
-import { candidates, parties, Candidate } from "@/data/candidates";
+import { candidates, parties } from "@/data/candidates";
 
 const ITEMS_PER_PAGE = 20;
 
 const CandidatesPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedParty, setSelectedParty] = useState<string>("all");
-  const [selectedWard, setSelectedWard] = useState<string>(searchParams.get("ward") || "all");
+  const [selectedParty, setSelectedParty] = useState("all");
+  const [selectedWard, setSelectedWard] = useState(searchParams.get("ward") || "all");
   const [currentPage, setCurrentPage] = useState(1);
 
   const filteredCandidates = useMemo(() => {
@@ -184,7 +184,7 @@ const CandidatesPage = () => {
   );
 };
 
-const CandidateCard = ({ candidate }: { candidate: Candidate }) => {
+const CandidateCard = ({ candidate }) => {
   return (
     <div className={`relative bg-card rounded-xl border p-5 hover:shadow-md transition-all ${candidate.isWinner ? 'border-accent' : 'border-border'}`}>
       {/* Winner Badge */}

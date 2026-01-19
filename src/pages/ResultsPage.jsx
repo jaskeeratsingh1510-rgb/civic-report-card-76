@@ -182,7 +182,7 @@ const ResultsPage = () => {
                     <BarChart data={barData} layout="vertical">
                       <XAxis type="number" tickFormatter={(v) => `${(v/1000).toFixed(0)}K`} />
                       <YAxis type="category" dataKey="name" width={80} />
-                      <Tooltip formatter={(value: number) => [value.toLocaleString(), 'Votes']} />
+                      <Tooltip formatter={(value) => [value.toLocaleString(), 'Votes']} />
                       <Bar dataKey="votes" radius={[0, 4, 4, 0]}>
                         {barData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
