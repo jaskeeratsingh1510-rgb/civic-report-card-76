@@ -1,25 +1,3 @@
-export interface Candidate {
-  id: string;
-  name: string;
-  party: string;
-  partyShort: string;
-  partyColor: string;
-  ward: number;
-  wardName: string;
-  category: string;
-  votes: number;
-  isWinner: boolean;
-  image?: string;
-}
-
-export interface WardResult {
-  ward: number;
-  wardName: string;
-  winner: Candidate;
-  totalVotes: number;
-  candidates: Candidate[];
-}
-
 // Party data
 export const parties = [
   { name: "Bharatiya Janata Party", short: "BJP", color: "#FF9933", seats: 89 },
@@ -35,7 +13,7 @@ export const parties = [
 ];
 
 // Generate sample candidates for all 227 wards
-const wardAreas: Record<number, string> = {
+const wardAreas = {
   1: "Dahisar East", 2: "Dahisar West", 3: "Borivali East", 4: "Borivali West",
   5: "Kandivali East", 6: "Kandivali West", 7: "Malad East", 8: "Malad West",
   9: "Goregaon East", 10: "Goregaon West", 11: "Jogeshwari East", 12: "Jogeshwari West",
@@ -48,7 +26,7 @@ const wardAreas: Record<number, string> = {
   // Continue for more wards...
 };
 
-const getWardName = (ward: number): string => {
+const getWardName = (ward) => {
   return wardAreas[ward] || `Area ${ward}`;
 };
 
@@ -57,13 +35,13 @@ const categories = ["General", "OBC (W)", "SC", "ST", "OBC", "GEN (W)"];
 const firstNames = ["Rekha", "Vishwanath", "Priya", "Anil", "Sunita", "Sameer", "Rakhee", "Dhanshree", "Tejasvi", "Pradip", "Forum", "Bhavika", "Sheetal", "Singh", "Jignasa", "Dhaval"];
 const lastNames = ["Yadav", "Mahadeshwar", "Sharma", "Patil", "Desai", "Jadhav", "Kolge", "Ghosalkar", "Choubey", "Parmar", "Gavkar", "Mhatre", "Girish", "Shah", "Vora", "Kumar"];
 
-function generateCandidates(): Candidate[] {
-  const candidates: Candidate[] = [];
+function generateCandidates() {
+  const candidates = [];
   let id = 1;
 
   for (let ward = 1; ward <= 227; ward++) {
     const numCandidates = Math.floor(Math.random() * 5) + 4; // 4-8 candidates per ward
-    const wardCandidates: Candidate[] = [];
+    const wardCandidates = [];
     
     for (let i = 0; i < numCandidates; i++) {
       const party = parties[Math.floor(Math.random() * parties.length)];
@@ -96,17 +74,17 @@ function generateCandidates(): Candidate[] {
 
 export const candidates = generateCandidates();
 
-export const getWardResults = (): WardResult[] => {
-  const wardMap = new Map<number, Candidate[]>();
+export const getWardResults = () => {
+  const wardMap = new Map();
   
   candidates.forEach(c => {
     if (!wardMap.has(c.ward)) {
       wardMap.set(c.ward, []);
     }
-    wardMap.get(c.ward)!.push(c);
+    wardMap.get(c.ward).push(c);
   });
 
-  const results: WardResult[] = [];
+  const results = [];
   wardMap.forEach((wardCandidates, ward) => {
     const sorted = [...wardCandidates].sort((a, b) => b.votes - a.votes);
     results.push({
@@ -122,7 +100,7 @@ export const getWardResults = (): WardResult[] => {
 };
 
 export const getPartyStats = () => {
-  const stats = new Map<string, { seats: number; votes: number; color: string }>();
+  const stats = new Map();
   
   parties.forEach(p => {
     stats.set(p.short, { seats: 0, votes: 0, color: p.color });

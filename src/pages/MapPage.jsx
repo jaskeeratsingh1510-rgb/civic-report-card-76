@@ -7,12 +7,12 @@ import { MapPin, Search, ZoomIn, ZoomOut, Locate } from "lucide-react";
 import { getWardResults } from "@/data/candidates";
 
 const MapPage = () => {
-  const [viewMode, setViewMode] = useState<"electoral" | "plain" | "results">("electoral");
-  const [hoveredWard, setHoveredWard] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState("electoral");
+  const [hoveredWard, setHoveredWard] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const wardResults = getWardResults();
 
-  const getWardColor = (ward: number) => {
+  const getWardColor = (ward) => {
     if (viewMode === "plain") return "fill-secondary stroke-border";
     
     const result = wardResults.find(w => w.ward === ward);
@@ -20,7 +20,7 @@ const MapPage = () => {
 
     if (viewMode === "results") {
       // Color by winning party
-      const colors: Record<string, string> = {
+      const colors = {
         "BJP": "fill-[#FF9933]",
         "SS (UBT)": "fill-[#FF6B00]",
         "SS": "fill-[#FF6B00]",
